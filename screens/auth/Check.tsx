@@ -49,7 +49,7 @@ export const Check: React.FC<CheckProps> = ({ user, onNext, onBack }) => {
                       {user?.firstName} {user?.lastName}
                   </Text>
                   <Text className="text-textLight">05/06/1988</Text>
-                  <Text className="text-textLight">+44 {user?.phoneNumber}</Text>
+                  <Text className="text-textLight"> {user?.phoneNumber}</Text>
                   <Text className="text-textLight">{user?.email}</Text>
               </View>
           </View>

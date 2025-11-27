@@ -66,6 +66,9 @@ export const Address: React.FC<AddressProps> = ({ onNext, onBack }) => {
             leftIcon={selectedAddress ? undefined : "search"}
             labelPlacement={selectedAddress ? "border" : "top"}
           />
+          <Text className="text-xs text-slate-400 mt-2 ml-1">
+            Demo: 123 Diamond Street, London, UK
+          </Text>
 
           {!selectedAddress && search.length > 0 && addresses.map((item, index) => (
             <TouchableOpacity

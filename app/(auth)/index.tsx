@@ -117,7 +117,7 @@ export default function SignupFlowScreen() {
           <Check
             user={{ ...user, ...tempData }}
             onNext={() => {
-              login({ ...user, ...tempData });
+              // login({ ...user, ...tempData });
               changeStep(Step.SUCCESS);
             }}
             onBack={handleBack}

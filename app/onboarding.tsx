@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import {
   View,
   Text,
@@ -31,7 +32,7 @@ const slides = [
     title: "Daily insights from world-class analysts",
     description:
       "Our analysts made their names at the top tier institutions",
-    image: require("../assets/images/onboarding-2.png"),
+    // image: require("../assets/images/onboarding-2.png"),
   },
   {
     id: "3",
@@ -59,8 +60,8 @@ export default function OnboardingScreen() {
 
   const handleNext = () => {
     if (currentIndex < slides.length - 1) {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
+      flatListRef.current?.scrollToOffset({
+        offset: (currentIndex + 1) * width,
         animated: true,
       });
     } else {
@@ -69,8 +70,7 @@ export default function OnboardingScreen() {
   };
 
   const handleNewUser = () => {
-    completeOnboarding();
-    router.push("/(auth)/signup"); 
+    router.push("/(auth)"); 
   };
 
   const handleLogin = () => {
@@ -151,6 +151,12 @@ export default function OnboardingScreen() {
         onMomentumScrollEnd={handleMomentumScrollEnd}
         bounces={false}
         decelerationRate="fast"
+        getItemLayout={(data, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        initialNumToRender={slides.length}
         className="flex-1"
       />
 
@@ -161,33 +167,46 @@ export default function OnboardingScreen() {
       >
         {renderPagination()}
 
-        {currentIndex === 0 ? (
-          <View className="w-full flex-col g-4">
-            <Button
-              title="I'm new to the app"
-              onPress={handleNewUser}
-              variant="primary"
-              size="large"
-              fullWidth
-            />
-            <Button
-              title="Log in"
-              onPress={handleLogin}
-              variant="text"
-              fullWidth
-              size="large"
-              className="mt-2"
-            />
-          </View>
-        ) : (
-          <Button
-            title="Next"
-            onPress={currentIndex === slides.length - 1 ? handleNewUser : handleNext}
-            variant="primary"
-            size="large"
-            fullWidth
-          />
-        )}
+        <Animated.View layout={Layout.springify()}>
+          {currentIndex === 0 ? (
+            <Animated.View 
+              key="step-0" 
+              entering={FadeIn.duration(300)} 
+              exiting={FadeOut.duration(300)}
+              className="w-full flex-col g-4"
+            >
+              <Button
+                title="I'm new to the app"
+                onPress={handleNext}
+                variant="primary"
+                size="large"
+                fullWidth
+              />
+              <Button
+                title="Log in"
+                onPress={handleLogin}
+                variant="text"
+                fullWidth
+                size="large"
+                className="mt-2"
+              />
+            </Animated.View>
+          ) : (
+            <Animated.View 
+              key="step-other" 
+              entering={FadeIn.duration(300)} 
+              exiting={FadeOut.duration(300)}
+            >
+              <Button
+                title="Next"
+                onPress={currentIndex === slides.length - 1 ? handleNewUser : handleNext}
+                variant="primary"
+                size="large"
+                fullWidth
+              />
+            </Animated.View>
+          )}
+        </Animated.View>
       </View>
     </View>
   );

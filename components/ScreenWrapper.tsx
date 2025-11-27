@@ -2,6 +2,7 @@ import React from "react";
 import { View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../constants/Color";
+import { StatusBar } from "react-native";
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -35,6 +36,8 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
       ]}
       className={className}
     >
+                  <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
+      
       {children}
     </View>
   );

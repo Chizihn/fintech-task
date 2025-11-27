@@ -1,13 +1,16 @@
+// src/components/Button.tsx
 import React from "react";
 import {
-  Text,
   TouchableOpacity,
+  Text,
   ActivityIndicator,
-  View,
   ViewStyle,
   TextStyle,
+  View,
 } from "react-native";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Responsive } from "../util/responsive";
 import { colors } from "../constants/Color";
 
 export type IconType = "feather" | "material";
@@ -20,7 +23,7 @@ export interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   icon?: keyof typeof Feather.glyphMap | keyof typeof MaterialIcons.glyphMap;
-  iconType?: IconType;
+  iconType?: IconType; // New: choose icon set
   iconPosition?: "left" | "right";
   fullWidth?: boolean;
   style?: ViewStyle;
@@ -38,101 +41,198 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   loading = false,
   icon,
-  iconType = "feather",
+  iconType = "feather", // Feather by default
   iconPosition = "left",
   fullWidth = true,
   style,
   textStyle,
-  className = "",
-  activeOpacity = 0.7,
+  className,
+  activeOpacity,
   children,
 }) => {
-  const getBackgroundColor = () => {
-    if (disabled) return "bg-gray-300";
+
+  const getSizeStyle = (): ViewStyle => {
+    switch (size) {
+      case "small":
+        return {
+          paddingVertical: Responsive.spacing(8),
+          paddingHorizontal: Responsive.spacing(16),
+        };
+      case "large":
+        return {
+          paddingVertical: Responsive.spacing(16),
+          paddingHorizontal: Responsive.spacing(32),
+        };
+      case "medium":
+      default:
+        return {
+          paddingVertical: Responsive.spacing(14),
+          paddingHorizontal: Responsive.spacing(24),
+        };
+    }
+  };
+
+  const getContainerStyle = (): ViewStyle => {
+    const baseStyle: ViewStyle = {
+      borderRadius: Responsive.scale(30),
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      width: fullWidth ? "100%" : undefined,
+      minHeight: Responsive.scale(48),
+    };
+
+    const sizeStyle = getSizeStyle();
+
+    let variantStyle: ViewStyle = {};
     switch (variant) {
       case "primary":
-        return "bg-[#1A3EEC]"; // Using the primary color from Color.ts
+        variantStyle.backgroundColor =
+          disabled || loading ? colors.card : colors.primary;
+        break;
       case "secondary":
-        return "bg-[#0D2A9A]";
+        variantStyle.backgroundColor =
+          disabled || loading ? colors.border : colors.card;
+        break;
+      case "outline":
+        variantStyle = {
+          backgroundColor: "transparent",
+          borderWidth: Responsive.scale(1.5),
+          borderColor: disabled || loading ? colors.border : colors.primary,
+        };
+        break;
+      case "text":
+      case "ghost":
+        variantStyle.backgroundColor = "transparent";
+        break;
       case "danger":
-        return "bg-red-500";
+        variantStyle.backgroundColor =
+          disabled || loading ? colors.placeholder : colors.error;
+        break;
+    }
+
+    return { ...baseStyle, ...sizeStyle, ...variantStyle };
+  };
+
+  const getTextColor = (): string => {
+    if (disabled || loading) return colors.placeholder;
+
+    switch (variant) {
+      case "primary":
+      case "danger":
+        return colors.background;
+      case "secondary":
+        return colors.text;
       case "outline":
       case "text":
       case "ghost":
-        return "bg-transparent";
       default:
-        return "bg-[#1A3EEC]";
+        return colors.primary;
     }
   };
 
-  const getBorderColor = () => {
-    if (disabled) return "border-transparent";
-    switch (variant) {
-      case "outline":
-        return "border border-gray-300";
-      default:
-        return "border-transparent";
-    }
-  };
 
-  const getTextColor = () => {
-    if (disabled) return "text-gray-500";
-    switch (variant) {
-      case "primary":
-      case "secondary":
-      case "danger":
-        return "text-white";
-      case "outline":
-        return "text-slate-900";
-      case "text":
-        return "text-text";
-      case "ghost":
-        return "text-[#1A3EEC]";
-      default:
-        return "text-white";
-    }
-  };
-
-  const getSizeStyles = () => {
+  const getTextSize = (): TextStyle => {
     switch (size) {
       case "small":
-        return "py-2 px-4";
+        return {
+          fontSize: Responsive.scale(14),
+          fontWeight: "500",
+        };
       case "large":
-        return "py-4 px-8";
+        return {
+          fontSize: Responsive.scale(16),
+          fontWeight: "600",
+        };
+      case "medium":
       default:
-        return "py-3.5 px-6"; 
+        return {
+          fontSize: Responsive.scale(16),
+          fontWeight: "500",
+        };
     }
   };
 
-  const getTextSize = () => {
+  const getIconSize = (): number => {
     switch (size) {
       case "small":
-        return "text-sm";
+        return Responsive.scale(16);
       case "large":
-        return "text-lg";
+        return Responsive.scale(22);
       default:
-        return "text-base";
+        return Responsive.scale(20);
     }
   };
 
   const renderIcon = () => {
     if (!icon) return null;
-    const IconComponent = iconType === "material" ? MaterialIcons : Feather;
-    const iconColor =
-      variant === "outline" || variant === "text" || variant === "ghost"
-        ? colors.primary
-        : "white";
+
+    const iconStyle = {
+      marginRight: iconPosition === "left" ? Responsive.spacing(8) : 0,
+      marginLeft: iconPosition === "right" ? Responsive.spacing(8) : 0,
+    };
+
+    const iconColor = getTextColor();
+
+    return iconType === "material" ? (
+      <MaterialIcons
+        name={icon as keyof typeof MaterialIcons.glyphMap}
+        size={getIconSize()}
+        color={iconColor}
+        style={iconStyle}
+      />
+    ) : (
+      <Feather
+        name={icon as keyof typeof Feather.glyphMap}
+        size={getIconSize()}
+        color={iconColor}
+        style={iconStyle}
+      />
+    );
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <ActivityIndicator
+            size="small"
+            color={
+              variant === "primary" || variant === "danger"
+                ? colors.background
+                : colors.primary
+            }
+          />
+          {title && (
+            <Text
+              style={[
+                getTextSize(),
+                { color: getTextColor(), marginLeft: Responsive.spacing(8) },
+                textStyle,
+              ]}
+            >
+              Loading...
+            </Text>
+          )}
+        </View>
+      );
+    }
 
     return (
-      <IconComponent
-        name={icon as any}
-        size={20}
-        color={disabled ? "#9CA3AF" : iconColor}
-        style={{
-          marginRight: iconPosition === "left" && title ? 8 : 0,
-          marginLeft: iconPosition === "right" && title ? 8 : 0,
-        }}
-      />
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {iconPosition === "left" && renderIcon()}
+        {children
+          ? children
+          : title && (
+              <Text
+                style={[getTextSize(), { color: getTextColor() }]}
+                className={`${textStyle}`}
+              >
+                {title}
+              </Text>
+            )}
+        {iconPosition === "right" && renderIcon()}
+      </View>
     );
   };
 
@@ -140,39 +240,11 @@ export const Button: React.FC<ButtonProps> = ({
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={activeOpacity}
-      className={`
-        flex-row items-center justify-center rounded-full
-        ${getBackgroundColor()}
-        ${getBorderColor()}
-        ${getSizeStyles()}
-        ${fullWidth ? "w-full" : "self-start"}
-        ${disabled ? "opacity-70" : "opacity-100"}
-        ${className}
-      `}
-      style={style}
+      style={[getContainerStyle(), style]}
+      activeOpacity={activeOpacity || 0.7}
+      className={className}
     >
-      {loading ? (
-        <ActivityIndicator
-          color={
-            variant === "outline" || variant === "text" ? colors.primary : "white"
-          }
-        />
-      ) : (
-        <>
-          {iconPosition === "left" && renderIcon()}
-          {title ? (
-            <Text
-              className={`font-semibold text-center ${getTextColor()} ${getTextSize()}`}
-              style={textStyle}
-            >
-              {title}
-            </Text>
-          ) : null}
-          {children}
-          {iconPosition === "right" && renderIcon()}
-        </>
-      )}
+      {renderContent()}
     </TouchableOpacity>
   );
 };

@@ -4,7 +4,7 @@ export const colors = {
 
   background: "#F8FAFC",    
   surface: "#FFFFFF",       
-  card: "#FFFFFF",
+  card: "#EEEEEE",
   
   text: "#1E293B",          
   textSecondary: "rgba(30, 41, 59, 0.7)", 

@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { CountryPickerModal, countries } from "../../components/CountryPickerModal";
 import { ScreenHeader } from "../../components/ScreenHeader";
 
+
 interface PhoneNumberProps {
   onNext: (phoneNumber: string) => void;
   onBack: () => void;
@@ -16,7 +17,7 @@ interface PhoneNumberProps {
 export const PhoneNumber: React.FC<PhoneNumberProps> = ({ onNext, onBack }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]); // Default to UK
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]); 
 
   return (
     <View className="flex-1 bg-white">
@@ -26,7 +27,7 @@ export const PhoneNumber: React.FC<PhoneNumberProps> = ({ onNext, onBack }) => {
         extraScrollHeight={20}
         bounces={false}
       >
-        <ScreenHeader onBack={onBack} />
+        <ScreenHeader showBackButton={false} onBack={onBack} />
 
         <View className="mt-4 flex-1">
           <Text className="text-2xl font-bold text-slate-900 mb-2">

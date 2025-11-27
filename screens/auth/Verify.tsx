@@ -41,10 +41,10 @@ export const Verify: React.FC<VerifyProps> = ({ phoneNumber, onNext, onBack }) =
                   placeholder="123 456"
                   placeholderTextColor={colors.placeholder}
                   keyboardType="number-pad"
-                  value={code}
-                  onChangeText={setCode}
+                  value={code.replace(/^(\d{3})(\d+)/, '$1 $2')}
+                  onChangeText={(text) => setCode(text.replace(/[^0-9]/g, ''))}
                   autoFocus
-                  maxLength={6}
+                  maxLength={7}
                />
             </View>
           </View>

@@ -20,9 +20,9 @@ interface CountryPickerModalProps {
 }
 
 export const countries: Country[] = [
+  { code: "NG", name: "Nigeria", flag: "🇳🇬", dialCode: "+234" },
   { code: "GB", name: "United Kingdom", flag: "🇬🇧", dialCode: "+44" },
   { code: "US", name: "United States", flag: "🇺🇸", dialCode: "+1" },
-  { code: "NG", name: "Nigeria", flag: "🇳🇬", dialCode: "+234" },
   { code: "CA", name: "Canada", flag: "🇨🇦", dialCode: "+1" },
   { code: "DE", name: "Germany", flag: "🇩🇪", dialCode: "+49" },
   { code: "FR", name: "France", flag: "🇫🇷", dialCode: "+33" },

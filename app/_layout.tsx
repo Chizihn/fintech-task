@@ -1,6 +1,7 @@
 import "../global.css";
 import React, { useEffect, useState } from "react";
 import {
+  Redirect,
   SplashScreen,
   Stack,
   useRouter,
@@ -20,7 +21,9 @@ const RootLayout = () => {
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
 
+
   useEffect(() => {
+
     // Wait for the store to rehydrate
     const rehydrate = async () => {
         // Zustand persist middleware handles rehydration automatically, 
@@ -36,31 +39,27 @@ const RootLayout = () => {
     rehydrate();
   }, []);
 
-  useEffect(() => {
-    if (!isReady) return;
-
-    const inAuthGroup = segments[0] === "(auth)";
-    const inOnboarding = segments[0] === "onboarding";
-
-    if (!hasOnboarded && !inOnboarding) {
-      // If not onboarded, redirect to onboarding
-      router.replace("/onboarding");
-    } else if (hasOnboarded && !isAuthenticated && !inAuthGroup) {
-      // If onboarded but not authenticated, redirect to auth (login/signup)
-      // We'll default to the auth index or login
-      router.replace("/(auth)");
-    } else if (isAuthenticated && (inOnboarding || inAuthGroup)) {
-      // If authenticated, redirect to home (assuming app/index.tsx is home)
-      router.replace("/");
-    }
-  }, [hasOnboarded, isAuthenticated, segments, isReady]);
-
   if (!isReady) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
+  }
+
+  const inAuthGroup = segments[0] === "(auth)";
+  const inOnboarding = segments[0] === "onboarding";
+
+  if (!hasOnboarded && !inOnboarding && !inAuthGroup) {
+    return <Redirect href="/onboarding" />;
+  }
+
+  if (hasOnboarded && !isAuthenticated && !inAuthGroup) {
+    return <Redirect href="/(auth)" />;
+  }
+
+  if (isAuthenticated && (inOnboarding || inAuthGroup)) {
+    return <Redirect href="/" />;
   }
 
   return (
