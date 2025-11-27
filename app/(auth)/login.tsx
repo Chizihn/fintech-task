@@ -7,6 +7,8 @@ import { Button } from "../../components/Button";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "../../constants/Color";
 import { useOnboardingStore } from "../../store/onboardingStore";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { ScreenHeader } from "../../components/ScreenHeader";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -16,30 +18,27 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     // Mock login
-    login({ email, firstName: "User" });
+    login({ email });
     router.replace("/");
   };
 
   return (
-    <ScreenWrapper className="bg-white px-6">
-      <View className="flex-1">
-        <View className="flex-row items-center py-4">
-          <TouchableOpacity onPress={() => router.back()}>
-            <Feather name="arrow-left" size={24} color={colors.text} />
-          </TouchableOpacity>
-        </View>
+    <ScreenWrapper className="bg-white">
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24 }}
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+      >
+        <ScreenHeader />
 
-        <View className="mt-4">
-          <Text className="text-2xl font-bold text-slate-900 mb-2">
-            Log in
-          </Text>
-          <Text className="text-base text-slate-500 mb-8">
-            Welcome back! Please enter your details.
+        <View className="mt-4 flex-1">
+          <Text className="text-2xl font-bold text-slate-900 mb-8">
+            Log in to your account
           </Text>
 
           <Input
-            label="Email"
-            placeholder="Enter your email"
+            label="Email address"
+            placeholder="Email address"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -47,21 +46,21 @@ export default function LoginScreen() {
           />
           <Input
             label="Password"
-            placeholder="Enter your password"
+            placeholder="Password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
           />
         </View>
 
-        <View className="flex-1 justify-end pb-8">
+        <View className="justify-end pb-8 mt-auto">
           <Button
             title="Log in"
             onPress={handleLogin}
             disabled={!email || !password}
           />
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </ScreenWrapper>
   );
 }

@@ -8,6 +8,7 @@ interface ScreenWrapperProps {
   style?: ViewStyle;
   className?: string;
   backgroundColor?: string;
+  useSafeArea?: boolean;
 }
 
 export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
@@ -15,6 +16,7 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   style,
   className = "",
   backgroundColor = colors.background,
+  useSafeArea = true,
 }) => {
   const insets = useSafeAreaInsets();
 
@@ -24,10 +26,10 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
         {
           flex: 1,
           backgroundColor,
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
+          paddingTop: useSafeArea ? insets.top : 0,
+          paddingBottom: useSafeArea ? insets.bottom : 0,
+          paddingLeft: useSafeArea ? insets.left : 0,
+          paddingRight: useSafeArea ? insets.right : 0,
         },
         style,
       ]}

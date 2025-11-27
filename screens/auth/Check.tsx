@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Button } from "../../components/Button";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "../../constants/Color";
+import { Image } from "react-native";
 
 interface CheckProps {
   user: any;
@@ -28,27 +29,28 @@ export const Check: React.FC<CheckProps> = ({ user, onNext, onBack }) => {
         </Text>
 
         {/* Map placeholder */}
-        <View className="w-full h-48 bg-blue-100 rounded-xl mb-6 items-center justify-center overflow-hidden">
-             <View className="absolute bg-blue-200 w-full h-full opacity-50" />
-             <View className="bg-black p-2 rounded-full">
-                <Feather name="home" size={20} color="white" />
-             </View>
+        <View className="w-full h-64 rounded-xl overflow-hidden mb-6">
+            <Image
+                source={require("../../assets/images/map.png")}
+                className="w-full h-full"
+                resizeMode="cover"
+            />
         </View>
 
-        <View className="space-y-6">
+        <View className="flex-col gap-10">
           <View className="flex-row">
               <View className="w-8 items-center pt-1">
                   <View className="bg-black rounded-full p-1">
                       <Feather name="user" size={12} color="white" />
                   </View>
               </View>
-              <View className="ml-3">
-                  <Text className="font-bold text-slate-900">
-                      Mr {user?.firstName} {user?.lastName}
+              <View className="ml-3 flex-col gap-2">
+                  <Text className="font-bold text-textLight">
+                      {user?.firstName} {user?.lastName}
                   </Text>
-                  <Text className="text-slate-500">05/06/1988</Text>
-                  <Text className="text-slate-500">+44 {user?.phoneNumber}</Text>
-                  <Text className="text-slate-500">{user?.email}</Text>
+                  <Text className="text-textLight">05/06/1988</Text>
+                  <Text className="text-textLight">+44 {user?.phoneNumber}</Text>
+                  <Text className="text-textLight">{user?.email}</Text>
               </View>
           </View>
 
@@ -59,7 +61,7 @@ export const Check: React.FC<CheckProps> = ({ user, onNext, onBack }) => {
                   </View>
               </View>
               <View className="ml-3">
-                  <Text className="text-slate-900">
+                  <Text className="text-textLight">
                       {user?.address}
                   </Text>
               </View>
@@ -67,16 +69,19 @@ export const Check: React.FC<CheckProps> = ({ user, onNext, onBack }) => {
         </View>
       </View>
 
-      <View className="flex-1 justify-end pb-8 space-y-4">
+      <View className="flex-1 justify-end flex-col ">
         <Button
           title="Yes, this information is correct"
           onPress={onNext}
           variant="primary"
+          size="large"
         />
         <Button
           title="No, go back"
           onPress={onBack}
           variant="text"
+          size="large"
+
           textStyle={{ color: colors.text }}
         />
       </View>

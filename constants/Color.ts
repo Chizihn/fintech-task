@@ -8,7 +8,7 @@ export const colors = {
   
   text: "#1E293B",          
   textSecondary: "rgba(30, 41, 59, 0.7)", 
-  textLight: "#64748B",
+  textLight: "#656565",
   placeholder: "#94A3B8",
 
   border: "#E2E8F0",        

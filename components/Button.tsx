@@ -100,7 +100,7 @@ export const Button: React.FC<ButtonProps> = ({
       case "large":
         return "py-4 px-8";
       default:
-        return "py-3.5 px-6"; // Medium
+        return "py-3.5 px-6"; 
     }
   };
 

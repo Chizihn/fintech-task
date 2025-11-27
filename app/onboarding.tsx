@@ -150,6 +150,7 @@ export default function OnboardingScreen() {
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         bounces={false}
+        decelerationRate="fast"
         className="flex-1"
       />
 
@@ -161,7 +162,7 @@ export default function OnboardingScreen() {
         {renderPagination()}
 
         {currentIndex === 0 ? (
-          <View className="w-full space-y-4">
+          <View className="w-full flex-col g-4">
             <Button
               title="I'm new to the app"
               onPress={handleNewUser}

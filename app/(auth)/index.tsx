@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, LayoutAnimation, Platform, UIManager } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { useOnboardingStore } from "../../store/onboardingStore";
@@ -13,10 +13,19 @@ import { Email } from "../../screens/auth/Email";
 import { Address } from "../../screens/auth/Address";
 import { Check } from "../../screens/auth/Check";
 import { Success } from "../../screens/auth/Success";
+import { NotificationInfo } from "../../screens/auth/NotificationInfo";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 enum Step {
   PHONE,
   VERIFY,
+  NOTIFICATION,
   PASSCODE,
   DETAILS,
   EMAIL,
@@ -25,17 +34,22 @@ enum Step {
   SUCCESS,
 }
 
-export default function SignupScreen() {
+export default function SignupFlowScreen() {
   const router = useRouter();
   const { updateUser, login, user } = useOnboardingStore();
   const [step, setStep] = useState<Step>(Step.PHONE);
   const [tempData, setTempData] = useState<any>({});
 
+  const changeStep = (newStep: Step) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setStep(newStep);
+  };
+
   const handleBack = () => {
     if (step === Step.PHONE) {
       router.back();
     } else {
-      setStep(step - 1);
+      changeStep(step - 1);
     }
   };
 
@@ -46,7 +60,7 @@ export default function SignupScreen() {
           <PhoneNumber
             onNext={(phoneNumber) => {
               setTempData({ ...tempData, phoneNumber });
-              setStep(Step.VERIFY);
+              changeStep(Step.VERIFY);
             }}
             onBack={handleBack}
           />
@@ -55,8 +69,14 @@ export default function SignupScreen() {
         return (
           <Verify
             phoneNumber={tempData.phoneNumber}
-            onNext={() => setStep(Step.PASSCODE)}
+            onNext={() => changeStep(Step.NOTIFICATION)}
             onBack={handleBack}
+          />
+        );
+      case Step.NOTIFICATION:
+        return (
+          <NotificationInfo
+            onNext={() => changeStep(Step.PASSCODE)}
           />
         );
       case Step.PASSCODE:
@@ -64,7 +84,7 @@ export default function SignupScreen() {
           <Passcode
             onNext={(passcode) => {
               updateUser({ passcode });
-              setStep(Step.DETAILS);
+              changeStep(Step.DETAILS);
             }}
             onBack={handleBack}
           />
@@ -74,7 +94,7 @@ export default function SignupScreen() {
           <Details
             onNext={(details) => {
               updateUser(details);
-              setStep(Step.EMAIL);
+              changeStep(Step.EMAIL);
             }}
             onBack={handleBack}
           />
@@ -84,7 +104,7 @@ export default function SignupScreen() {
           <Email
             onNext={(email) => {
               updateUser({ email });
-              setStep(Step.ADDRESS);
+              changeStep(Step.ADDRESS);
             }}
             onBack={handleBack}
           />
@@ -94,7 +114,7 @@ export default function SignupScreen() {
           <Address
             onNext={(address) => {
               updateUser({ address });
-              setStep(Step.CHECK);
+              changeStep(Step.CHECK);
             }}
             onBack={handleBack}
           />
@@ -105,7 +125,7 @@ export default function SignupScreen() {
             user={{ ...user, ...tempData }}
             onNext={() => {
               login({ ...user, ...tempData });
-              setStep(Step.SUCCESS);
+              changeStep(Step.SUCCESS);
             }}
             onBack={handleBack}
           />
@@ -121,5 +141,13 @@ export default function SignupScreen() {
     }
   };
 
-  return <ScreenWrapper className="bg-white">{renderStep()}</ScreenWrapper>;
+  return (
+    <ScreenWrapper
+      className={step === Step.PASSCODE ? "bg-[#1A3EEC]" : "bg-white"}
+      backgroundColor={step === Step.PASSCODE ? "#1A3EEC" : undefined}
+      useSafeArea={step !== Step.PASSCODE}
+    >
+      {renderStep()}
+    </ScreenWrapper>
+  );
 }

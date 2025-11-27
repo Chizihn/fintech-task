@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "../../constants/Color";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { ScreenHeader } from "../../components/ScreenHeader";
 
 interface DetailsProps {
   onNext: (details: { firstName: string; lastName: string; middleName?: string }) => void;
@@ -16,48 +16,57 @@ export const Details: React.FC<DetailsProps> = ({ onNext, onBack }) => {
   const [lastName, setLastName] = useState("");
 
   return (
-    <View className="flex-1 bg-white px-6">
-      <View className="flex-row items-center py-4">
-        <TouchableOpacity onPress={onBack}>
-          <Feather name="arrow-left" size={24} color={colors.text} />
-        </TouchableOpacity>
-      </View>
+    <View className="flex-1 bg-white">
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24 }}
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        bounces={false}
+      >
+        <ScreenHeader onBack={onBack} />
 
-      <View className="mt-4">
-        <Text className="text-2xl font-bold text-slate-900 mb-2">
-          About you
-        </Text>
-        <Text className="text-base text-slate-500 mb-8">
-          Please enter your full name as it appears on your ID.
-        </Text>
+        <View className="mt-4 flex-1">
+          <Text className="text-2xl font-bold text-slate-900 mb-3">
+            About you
+          </Text>
+          <Text className="text-lg text-slate-500 mb-8">
+            Please enter your full name as it appears on your ID.
+          </Text>
 
-        <Input
-          label="First name"
-          placeholder="Unflow"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-        <Input
-          label="Middle name"
-          placeholder=""
-          value={middleName}
-          onChangeText={setMiddleName}
-        />
-        <Input
-          label="Last name"
-          placeholder=""
-          value={lastName}
-          onChangeText={setLastName}
-        />
-      </View>
+          <View className="flex-col gap-4">
+            <Input
+            label="First name"
+            placeholder="Enter your first name"
+            value={firstName}
+            onChangeText={setFirstName}
+            labelPlacement="border"
+          />
+          <Input
+            label="Middle name"
+            placeholder="Enter your middle name"
+            value={middleName}
+            onChangeText={setMiddleName}
+            labelPlacement="border"
+          />
+          <Input
+            label="Last name"
+            placeholder="Enter your last name"
+            value={lastName}
+            onChangeText={setLastName}
+            labelPlacement="border"
+          />
+          </View>
+        </View>
 
-      <View className="flex-1 justify-end pb-8">
-        <Button
-          title="Next"
-          onPress={() => onNext({ firstName, lastName, middleName })}
-          disabled={!firstName || !lastName}
-        />
-      </View>
+        <View className="justify-end pb-8 mt-auto">
+          <Button
+            title="Next"
+            onPress={() => onNext({ firstName, lastName, middleName })}
+            size="large"
+            disabled={!firstName || !lastName}
+          />
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };
