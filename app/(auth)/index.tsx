@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, LayoutAnimation, Platform, UIManager } from "react-native";
 import { useRouter } from "expo-router";
 import { ScreenWrapper } from "../../components/ScreenWrapper";
 import { useOnboardingStore } from "../../store/onboardingStore";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 // Components
 import { PhoneNumber } from "../../screens/auth/PhoneNumber";
@@ -14,13 +14,6 @@ import { Address } from "../../screens/auth/Address";
 import { Check } from "../../screens/auth/Check";
 import { Success } from "../../screens/auth/Success";
 import { NotificationInfo } from "../../screens/auth/NotificationInfo";
-
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 enum Step {
   PHONE,
@@ -35,13 +28,13 @@ enum Step {
 }
 
 export default function SignupFlowScreen() {
+  console.log("SignupFlowScreen mounted");
   const router = useRouter();
   const { updateUser, login, user } = useOnboardingStore();
   const [step, setStep] = useState<Step>(Step.PHONE);
   const [tempData, setTempData] = useState<any>({});
 
   const changeStep = (newStep: Step) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setStep(newStep);
   };
 
@@ -147,7 +140,13 @@ export default function SignupFlowScreen() {
       backgroundColor={step === Step.PASSCODE ? "#1A3EEC" : undefined}
       useSafeArea={step !== Step.PASSCODE}
     >
-      {renderStep()}
+      <Animated.View
+        key={step}
+        entering={FadeIn.duration(300)}
+        style={{ flex: 1 }}
+      >
+        {renderStep()}
+      </Animated.View>
     </ScreenWrapper>
   );
 }

@@ -54,7 +54,7 @@ export const PhoneNumber: React.FC<PhoneNumberProps> = ({ onNext, onBack }) => {
             }
           />
           
-           <Text className="text-xs text-slate-400 mt-2">
+           <Text className="text-md text-textLight mt-2">
             By tapping Get started, you agree to the Terms & Conditions
           </Text>
         </View>
